@@ -14,11 +14,11 @@ public class ServerService {
     /*@param int numbers how many instances to return in ArrayList
     * @return ArrayList of ConnectionServerData
     * */
-    public static ArrayList<ConnectionServerData> getConnectionServerData(int number){
-        ArrayList<ConnectionServerData> connectionServerData = new ArrayList<>(number);
-        for(int cursor=0;cursor<number;cursor++){
+    public static ArrayList<ConnectionServerData> createRandomConnectionServerData(int numberOfInstances){
+        ArrayList<ConnectionServerData> connectionServerData = new ArrayList<>(numberOfInstances);
+        for(int cursor=0;cursor<numberOfInstances;cursor++){
             try {
-                Thread.sleep(1000);
+                Thread.sleep(500);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

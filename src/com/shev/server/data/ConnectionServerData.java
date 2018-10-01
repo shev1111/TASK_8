@@ -4,13 +4,13 @@ public class ConnectionServerData {
 
     private long currentTime;
     private long session;
-    private String IP;
+    private String ip;
 
     public ConnectionServerData(String random) {
         if(random.contentEquals("random")){
             currentTime = System.currentTimeMillis();
             session = RandomServerData.getRandomSessionId();
-            IP = RandomServerData.getRandomServerIP();
+            ip = RandomServerData.getRandomServerIP();
         }
     }
 
@@ -26,8 +26,8 @@ public class ConnectionServerData {
         return session;
     }
 
-    public String getIP() {
-        return IP;
+    public String getIp() {
+        return ip;
     }
 
     public void setCurrentTime(long currentTime) {
@@ -38,7 +38,12 @@ public class ConnectionServerData {
         this.session = session;
     }
 
-    public void setIP(String IP) {
-        this.IP = IP;
+    public void setIp(String ip) {
+        this.ip = ip;
+    }
+
+    @Override
+    public String toString() {
+        return this.currentTime+" "+this.session+" "+this.ip;
     }
 }

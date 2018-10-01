@@ -5,20 +5,31 @@ import com.shev.server.exeption.IllegalDateParametersException;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 
 public class MyServerLogger {
-
-    private static final String LOG_FILE = "src\\com\\shev\\server\\log\\server_logs.txt";
+    private static final String USER_DIR = System.getProperty("user.dir");
+    private static final String SEP = System.getProperty("file.separator");
+    private static final String LOG_FILE = USER_DIR+SEP+"src"+SEP+"com"+SEP+"shev"+SEP+"server"+SEP+"log"+SEP+"server_logs.txt";
 
     public static void writeLogToTxt (ArrayList<ConnectionServerData> connectionServerData) {
         try(BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(LOG_FILE, true))) {
             for (ConnectionServerData serverData : connectionServerData) {
                 bufferedWriter.write(Long.toString(serverData.getCurrentTime())+" "+
                                          serverData.getSession()+" "+
-                                         serverData.getIP());
+                                         serverData.getIp());
                 bufferedWriter.newLine();
             }
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+
+    }
+
+    private static void writeLogToTxt (StringBuffer serverConDataBuff) {
+        try(BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(LOG_FILE))) {
+            bufferedWriter.write(serverConDataBuff.toString());
         }catch (IOException e){
             e.printStackTrace();
         }
@@ -44,7 +55,7 @@ public class MyServerLogger {
 
                         case 0:connectionServerData.setCurrentTime(Long.parseLong(tokens[cursor]));
                         case 1:connectionServerData.setSession(Long.parseLong(tokens[cursor]));
-                        case 2:connectionServerData.setIP(tokens[cursor]);
+                        case 2:connectionServerData.setIp(tokens[cursor]);
                     }
                     long sessionDate = connectionServerData.getCurrentTime();
                     if(sessionDate>=from.getTime()&&sessionDate<=to.getTime()){
@@ -57,5 +68,36 @@ public class MyServerLogger {
             e.printStackTrace();
         }
         return connectionServerDataList;
+    }
+
+    public static void deleteThreeDaysOldData(){
+        try (BufferedReader bufferedReader = new BufferedReader(new FileReader(LOG_FILE))) {
+
+            String currentLine;
+            StringBuffer serverConDataBuffer = new StringBuffer("");
+
+            Calendar calendar = Calendar.getInstance();
+            long todayMillis = calendar.getTimeInMillis();
+            calendar.add(Calendar.DAY_OF_MONTH,-3);
+            long threeDaysAfterMillis = calendar.getTimeInMillis();
+
+            while ((currentLine = bufferedReader.readLine()) != null) {
+                String[] tokens = currentLine.split(" ");
+                long sessionTime = Long.parseLong(tokens[0]);
+                if(sessionTime>=threeDaysAfterMillis&&sessionTime<=todayMillis){
+                    serverConDataBuffer.append(currentLine);
+                    serverConDataBuffer.append("\n");
+                }
+            }
+
+            if(serverConDataBuffer.length()!=0){
+                System.out.println(serverConDataBuffer.toString());
+                writeLogToTxt(serverConDataBuffer);
+            }
+
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
