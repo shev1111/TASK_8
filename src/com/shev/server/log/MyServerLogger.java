@@ -9,11 +9,8 @@ import java.util.Calendar;
 import java.util.Date;
 
 public class MyServerLogger {
-    private static final String USER_DIR = System.getProperty("user.dir");
-    private static final String SEP = System.getProperty("file.separator");
-    private static final String LOG_FILE = USER_DIR+SEP+"src"+SEP+"com"+SEP+"shev"+SEP+"server"+SEP+"log"+SEP+"server_logs.txt";
 
-    public static void writeLogToTxt (ArrayList<ConnectionServerData> connectionServerData) {
+    public static void writeLogToTxt (ArrayList<ConnectionServerData> connectionServerData, String LOG_FILE) {
         try(BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(LOG_FILE, true))) {
             for (ConnectionServerData serverData : connectionServerData) {
                 bufferedWriter.write(Long.toString(serverData.getCurrentTime())+" "+
@@ -27,16 +24,7 @@ public class MyServerLogger {
 
     }
 
-    private static void writeLogToTxt (StringBuffer serverConDataBuff) {
-        try(BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(LOG_FILE))) {
-            bufferedWriter.write(serverConDataBuff.toString());
-        }catch (IOException e){
-            e.printStackTrace();
-        }
-
-    }
-
-    public static ArrayList<ConnectionServerData> getServerSessionsPeriod(Date from, Date to) throws IllegalDateParametersException{
+    public static ArrayList<ConnectionServerData> getServerSessionsPeriod(Date from, Date to, String LOG_FILE) throws IllegalDateParametersException{
         if(from.getTime()>to.getTime()){
             throw new IllegalDateParametersException("'to' parameter must be greater then 'from'!");
         }
@@ -70,7 +58,16 @@ public class MyServerLogger {
         return connectionServerDataList;
     }
 
-    public static void deleteThreeDaysOldData(){
+    private static void writeLogToTxt (StringBuffer serverConDataBuff, String LOG_FILE) {
+        try(BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(LOG_FILE))) {
+            bufferedWriter.write(serverConDataBuff.toString());
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+
+    }
+
+    public static void deleteThreeDaysOldData(String LOG_FILE){
         try (BufferedReader bufferedReader = new BufferedReader(new FileReader(LOG_FILE))) {
 
             String currentLine;
@@ -92,7 +89,7 @@ public class MyServerLogger {
 
             if(serverConDataBuffer.length()!=0){
                 System.out.println(serverConDataBuffer.toString());
-                writeLogToTxt(serverConDataBuffer);
+                writeLogToTxt(serverConDataBuffer, LOG_FILE);
             }
 
         }

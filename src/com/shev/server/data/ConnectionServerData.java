@@ -14,6 +14,12 @@ public class ConnectionServerData {
         }
     }
 
+    public ConnectionServerData(long currentTime, long session, String ip) {
+        this.currentTime = currentTime;
+        this.session = session;
+        this.ip = ip;
+    }
+
     public ConnectionServerData() {
 
     }
