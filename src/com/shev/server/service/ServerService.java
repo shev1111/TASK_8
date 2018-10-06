@@ -3,9 +3,6 @@ package com.shev.server.service;
 import com.shev.server.data.ConnectionServerData;
 import com.shev.server.exeption.IllegalDateParametersException;
 import com.shev.server.log.MyServerLogger;
-
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -33,20 +30,8 @@ public class ServerService {
     /*@param String from and to dates with pattern format yyyy-MM-dd HH:mm:ss
     * @return ArrayList of ConnectionServerData for defined period
     * */
-    public static ArrayList<ConnectionServerData> getConnectionServerDataByPeriod(String from, String to) throws IllegalDateParametersException{
-        String pattern = "yyyy-MM-dd HH:mm:ss";
-        SimpleDateFormat dateFormat = new SimpleDateFormat(pattern);
-        ArrayList<ConnectionServerData> serverData = new ArrayList<>();
-        try {
-
-            Date dateFrom = dateFormat.parse(from);
-            Date dateTo = dateFormat.parse(to);
-            serverData = MyServerLogger.getServerSessionsPeriod(dateFrom,dateTo, LOG_FILE);
-
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        return serverData;
+    public static ArrayList<ConnectionServerData> getConnectionServerDataByPeriod(Date from, Date to) throws IllegalDateParametersException{
+        return MyServerLogger.getServerSessionsPeriod(from,to, LOG_FILE);
     }
 
     /*

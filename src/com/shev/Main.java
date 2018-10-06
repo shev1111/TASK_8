@@ -3,7 +3,11 @@ package com.shev;
 import com.shev.server.data.ConnectionServerData;
 import com.shev.server.exeption.IllegalDateParametersException;
 import com.shev.server.service.ServerService;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 
 public class Main {
@@ -14,17 +18,24 @@ public class Main {
 
         String from = "2018-09-29 20:25:10";
         String to   = "2018-09-29 20:25:13";
-        ArrayList<ConnectionServerData> ServerData = null;
+        String pattern = "yyyy-MM-dd HH:mm:ss";
+        SimpleDateFormat dateFormat = new SimpleDateFormat(pattern);
+        Date dateFrom;
+        Date dateTo;
         try {
-            ServerData = ServerService.getConnectionServerDataByPeriod(from,to);
-        } catch (IllegalDateParametersException e) {
+            dateFrom  = dateFormat.parse(from);
+            dateTo  = dateFormat.parse(to);
+
+            ArrayList<ConnectionServerData> serverData = ServerService.getConnectionServerDataByPeriod(dateFrom,dateTo);
+            for (ConnectionServerData data:serverData) {
+                System.out.println(data);
+            }
+            ServerService.deleteOldData();
+
+
+        } catch (IllegalDateParametersException | ParseException e) {
             e.printStackTrace();
         }
-
-        for (ConnectionServerData data:ServerData) {
-            System.out.println(data);
-        }
-        ServerService.deleteOldData();
 
 
 
